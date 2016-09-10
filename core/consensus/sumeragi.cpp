@@ -55,7 +55,7 @@ void loopMember(td::shared_ptr<std::string> const tx, int const currLeader) {
                 ::broadcastAllValidators(viewChange);
             }
         } else if (numCommits = 2f) {
-            complete(tx);  // Finality is achieved
+            complete(tx);  // Finality is achieved TODO: add checkpoint logic
         }
 
     } else if (tx::isPrepare()) {
@@ -98,7 +98,7 @@ void loop() {
             if (panic.isFromClient()){
                 ::broadcastAllValidators(panic);
             } else {
-                
+
             }
         }
     }
