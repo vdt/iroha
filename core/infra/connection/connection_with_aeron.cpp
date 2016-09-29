@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <cstdio>
 
-
 #include <util/CommandOptionParser.h>
 #include <Aeron.h>
 #include <array>
@@ -50,8 +49,8 @@ namespace connection {
       std::int64_t subscriptionId;
       std::int64_t publicationId;
 
-      logger::info("connection", "Subscribing at "+
-        config.at("subscribeChannel") +" on Stream ID "+ config.at("subscribeStreamId"));
+      logger::info("connection", "Subscribing at " +
+        config.at("subscribeChannel") + " on Stream ID " + config.at("subscribeStreamId"));
       aeronContext.newSubscriptionHandler(
         [](const std::string& channel, std::int32_t streamId, std::int64_t correlationId)
         {

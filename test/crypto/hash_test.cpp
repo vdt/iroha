@@ -1,5 +1,3 @@
-
-
 #include "../../core/crypto/hash.hpp"
 
 #include <gtest/gtest.h>
