@@ -4,8 +4,8 @@ from fabric.api import *
 from fabric.colors import *
 
 env.hosts = myhosts
-env.port =  port
-env.user =  user
+env.port = port
+env.user = user
 env.password = password
 
 @task
@@ -50,7 +50,6 @@ def initalize_server():
   run('git config --global user.name  ' + github.name)
   sudo("mkdir -p /var/www")
 
-
 def git_current_branch():
   res = local('git branch --contains', capture=True)
   return res.split(' ')[1]
@@ -69,7 +68,7 @@ def initialize_repository():
   check_key_github()
   with cd("/var/www"):
     sudo("rm -rf *")
-    sudo("git clone --recursive "+repo_name)
+    sudo("git clone --recursive " + repo_name)
   with cd("/var/www/iroha"):
     with shell_env(JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'):
       with cd("core/vendor/Aeron"):
@@ -120,7 +119,7 @@ def connection_test_production():
 def git_push(branch = None):
   if not branch:
     branch = git_current_branch()
-  local("git push origin "+branch)
+  local("git push origin " + branch)
 
 def remake():
   with cd("/var/www/iroha"):
@@ -133,8 +132,8 @@ def restart():
   # Why not work?
   #sudo('pkill -f "iroha-main"')
   pid = sudo("pgrep -f 'iroha-main'", warn_only=True)
-  print(cyan(pid),"!!")
-  sudo('kill -9 '+str(pid), warn_only=True)
+  print(cyan(pid), "!!")
+  sudo('kill -9 ' + str(pid), warn_only=True)
   sudo('/var/www/iroha/build/bin/iroha-main &', pty=False)
   sudo('ps aux | grep iroha-main')
 
@@ -156,8 +155,8 @@ def test(branch = None):
       res = sudo("git reset --hard")
       res = sudo("git checkout -b "+branch+" origin/"+branch, warn_only=True)
       if res.failed:
-        sudo("git checkout "+branch)
-      sudo("git pull origin "+branch+" --no-ff")
+        sudo("git checkout " + branch)
+      sudo("git pull origin " + branch + " --no-ff")
 
       remake()
 
@@ -165,10 +164,10 @@ def test(branch = None):
 
   with cd("/var/www/iroha"):
     res = sudo("git reset --hard")
-    res = sudo("git checkout -b "+branch+" origin/"+branch, warn_only=True)
+    res = sudo("git checkout -b " + branch + " origin/" + branch, warn_only=True)
     if res.failed:
-      sudo("git checkout "+branch)
-    sudo("git pull origin "+branch+" --no-ff")
+      sudo("git checkout " + branch)
+    sudo("git pull origin " + branch + " --no-ff")
 
     remake()
     restart()
