@@ -57,13 +57,12 @@ def git_current_branch():
 
 @task
 def check_key_github():
-  with quiet():
-    res = run("ssh -T git@github.com", warn_only=True)
-    if not "successfully authenticated" in res:
-      print(red("Githubにサーバーの公開鍵が登録されていないよ!!"))
-      print(red("gitHubでssh接続する手順~公開鍵・秘密鍵の生成から~"))
-      print("Ref:http://qiita.com/shizuma/items/2b2f873a0034839e47ce")
-      quit()
+  res = run("ssh -T git@github.com", warn_only=True)
+  if not "successfully authenticated" in res:
+    print(red("Githubにサーバーの公開鍵が登録されていないよ!!"))
+    print(red("gitHubでssh接続する手順~公開鍵・秘密鍵の生成から~"))
+    print("Ref:http://qiita.com/shizuma/items/2b2f873a0034839e47ce")
+    quit()
 
 @task
 def initialize_repository():
