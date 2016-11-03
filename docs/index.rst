@@ -23,7 +23,6 @@ Table of Contents
     dev_environment.rst
 
 
-
 .. _usage-docs:
 
 

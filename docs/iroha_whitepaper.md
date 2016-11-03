@@ -139,6 +139,8 @@ The state with the Merkle root that has the most transactions in the Merkle tree
 
 ### Data permissions
 
+Data permissioning is crucial to many real use cases. For example, companies will not likely accept distributed ledger technology if it means that competing institutions will know the intricate details of transactions.
+
 ## Hijiri: Trust system
 
 The trust system is based on rounds. At each round, validating peers that are registered with the membership service perform the following tasks to establish trust (reliability) ratings for the peers:
