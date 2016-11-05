@@ -23,3 +23,6 @@
 [submodule "core/vendor/Cappuccino"]
 	path = core/vendor/Cappuccino
 	url = https://github.com/MizukiSonoko/Cappuccino.git
+[submodule "core/vendor/orc"]
+	path = core/vendor/orc
+	url = https://github.com/apache/orc.git

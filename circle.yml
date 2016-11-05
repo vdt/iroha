@@ -32,6 +32,7 @@ checkout:
     - cd $IROHA_HOME/core/vendor/Agrona; ./gradlew
     - cd $IROHA_HOME/core/vendor/Aeron;  ./gradlew; mkdir -p cppbuild/Debug; cd cppbuild/Debug; cmake ../..; cmake --build . --clean-first
     - cd $IROHA_HOME/core/vendor/leveldb; make
+    - cd $IROHA_HOME/core/vendor/ord; mkdir build; cd build; cmake .. -DBUILD_JAVA=OFF; make package
     - cd $IROHA_HOME/core/vendor/ed25519; make
     - cd $IROHA_HOME/core/vendor/KeccakCodePackage; make; make generic64/libkeccak.a
     - cd $IROHA_HOME/core/infra/crypto/; make
