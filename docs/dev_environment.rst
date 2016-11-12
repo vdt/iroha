@@ -11,3 +11,8 @@ We strongly recommend the use of Fabric (the Python library, not the Hyperledger
 
 When using fabric, don't run on a remote machine as root, since the paths will not work >_<. 
 
+
+Docker
+-----------------
+
+https://github.com/hyperledger/iroha/issues/60
