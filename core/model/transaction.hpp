@@ -63,19 +63,19 @@ class Transaction {
         {}
     };
 
-    T command;
+    std::unique_ptr<T> command;
     std::string hash;
     std::vector<txSignature> txSignatures;
 
 public:
 
-    Transaction(T command):
-        command(command)
+    Transaction(std::unique_ptr<T> command):
+        command(std::move(command))
     {}
 
     std::string getHash() {
         auto parser = json_parse_with_json_nlohman::JsonParse<T>();
-        return  hash::sha3_256_hex(parser.dump(command.dump()));
+        return hash::sha3_256_hex(parser.dump(command->dump()));
     }
 
     std::string getAsJSON() const{
@@ -87,6 +87,7 @@ public:
     }
 
     void addTxSignature(std::string pubKey,std::string signature){
+        std::cout <<"+"<< pubKey << std::endl;
         txSignatures.push_back(txSignature(pubKey, signature));
     }
 
@@ -113,8 +114,8 @@ public:
             txSigs.listSub.push_back(txSig);
         }
         obj.dictSub.insert( std::make_pair( "txSignatures", txSigs));
-        obj.dictSub.insert( std::make_pair( "hash",  Object(Type::STR, hash)));
-        obj.dictSub.insert( std::make_pair( "command", command.dump()));
+        obj.dictSub.insert( std::make_pair( "hash",  Object(Type::STR, getHash())));
+        obj.dictSub.insert( std::make_pair( "command", command->dump()));
         return obj;
     }
 
@@ -124,8 +125,8 @@ public:
         auto txSig = Rule(Type::DICT);
         txSig.dictSub.insert( std::make_pair( "publicKey", Rule(Type::STR)));
         txSig.dictSub.insert( std::make_pair( "signature", Rule(Type::STR)));
-        txSigs.listSub = txSig;
-        obj.dictSub.insert( std::make_pair( "txSignatures", txSigs));
+        txSigs.listSub.reset(&txSig);
+        obj.dictSub.insert( std::make_pair( "txSignatures", std::move(txSigs)));
         obj.dictSub.insert( std::make_pair( "hash",  Rule(Type::STR)));
         obj.dictSub.insert( std::make_pair( "command", T::getJsonParseRule()));
         return obj;
