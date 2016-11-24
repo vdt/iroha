@@ -58,12 +58,13 @@ int main(){
         std::cout <<" receive :" << message <<" from:"<< from << "\n";
     });
 
-    while(1){
+    while(1) {
         std::cout << "name  in >> ";
         std::cin>> cmd;
-        if(cmd == "quit") break;
+        if (cmd == "quit")
+            break;
 
-        for(const auto& n : nodes){
+        for (const auto& n : nodes){
             std::cout<< "=========" << std::endl;
             std::cout<< n->getPublicKey() << std::endl;
             std::cout<< n->getIP() << std::endl;
@@ -79,10 +80,12 @@ int main(){
             peer::getMyPublicKey(),
             signature::sign(tx->getHash(), peer::getMyPublicKey(), peer::getPrivateKey())
         );
+
         auto event = consensus_event::ConsensusEvent<
             transaction::Transaction<command::Transfer<domain::Domain>>,
             command::Transfer<domain::Domain>
         >(std::move(tx));
+
         auto parser = json_parse_with_json_nlohman::JsonParse<
            consensus_event::ConsensusEvent<
               transaction::Transaction<command::Transfer<domain::Domain>>,
@@ -90,7 +93,6 @@ int main(){
            >
         >();
         std::cout<<  parser.dump(event.dump()) << std::endl;
-
     }
 
     http_th.detach();

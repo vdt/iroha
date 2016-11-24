@@ -33,12 +33,14 @@ limitations under the License.
 
 int main(){
     std::string cmd;
-    std::string pubKey = peer::getMyPublicKey();
+    std::string pubKey = peer::getMyPublicKey(); //TODO: これを使う？
 
     while(1){
-        std::cout <<"name  in >> ";
-        std::cin>> cmd;
-        if(cmd == "quit") break;
+        std::cout << "name in >> ";
+        std::cin >> cmd;
+        if (cmd == "quit") {
+            break;
+        }
 
         auto tx = std::make_unique<transaction::Transaction<command::Transfer<domain::Domain>>>(
                 std::make_unique<command::Transfer<domain::Domain>>(
@@ -50,17 +52,19 @@ int main(){
                 peer::getMyPublicKey(),
                 signature::sign(tx->getHash(), peer::getMyPublicKey(), peer::getPrivateKey()).c_str()
         );
+
         auto event = consensus_event::ConsensusEvent<
                 transaction::Transaction<command::Transfer<domain::Domain>>,
                 command::Transfer<domain::Domain>
         >(std::move(tx));
+
         auto parser = json_parse_with_json_nlohman::JsonParse<
                 consensus_event::ConsensusEvent<
                         transaction::Transaction<command::Transfer<domain::Domain>>,
                         command::Transfer<domain::Domain>
                 >
         >();
-        std::cout<<  parser.dump(event.dump()) << std::endl;
+        std::cout << parser.dump(event.dump()) << std::endl;
     }
 
     return 0;
