@@ -344,7 +344,7 @@ namespace sumeragi {
      * are the same, then the order (ascending) of the public keys for the servers are used.
      */
     void determineConsensusOrder() {
-        // WIP We creat getTrustScore() function. till then circle list
+        // TODO: create getTrustScore() function. till then circle list
         /*
         std::deque<
                 std::unique_ptr<peer::Node>
@@ -380,7 +380,7 @@ namespace sumeragi {
         logger::info("sumeragi", "=+=");
         logger::info("sumeragi", "start main loop");
 
-        while (true) {  // TODO: replace with callback linking the event repository?
+        while (true) {  // 千五百秋　TODO: replace with callback linking the event repository?
             if(!repository::event::empty()) {
                 // Determine node order
                 determineConsensusOrder();
