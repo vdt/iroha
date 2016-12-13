@@ -222,6 +222,7 @@ namespace sumeragi {
 
         logger::info("sumeragi", "processTransaction");
         if (!transaction_validator::isValid(event->getTx())) { // TODO: the transaction itself has to be accessible here
+            detail::printReject();
             return; //TODO-futurework: give bad trust rating to nodes that sent an invalid event
         }
         logger::info("sumeragi", "validated");
