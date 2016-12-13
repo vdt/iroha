@@ -88,7 +88,14 @@ Additionally, the following two transaction types take as input (i.e., "wrap") o
 * Multisignature
 * Interledger (i.e., cross-chain)
 
-#### 2.6.1 Consensus events and processing order
+#### 2.6.1 Transaction validation
+
+Transaction validation consists of two phases:
+
+ 1. Validating the digital signature
+ 2. Validating the state information
+
+#### 2.6.2 Consensus events and processing order
 
 When broadcast, transactions are wrapped as consensus events. 
 
@@ -105,7 +112,7 @@ Byzantine fault tolerant systems are engineered to tolerate *f* numbers of Byzan
 
 Duan, S., Meling, H., Peisert, S., & Zhang, H. (2014). *Bchain: Byzantine replication with high throughput and embedded reconfiguration*. In International Conference on Principles of Distributed Systems (pp. 91-106). Springer.
 
-As in B-Chain, we consider the concept of a global order over validating peers and sets **A** and **B** of peers, where **A** consists of the first 2*f*+1 peers and **B** consists of the remainder. As 2*f*+1 signatures are needed to confirm a transaction, under the normal case only 2*f*+1 peers are involved in transaction validation; the remaining peers only join the validation when faults are exhibited in peers in set **A**. The 2*f*+1th peer is called the *proxy tail*.
+As in B-Chain, we consider the concept of a global order over validating peers and sets **A** and **B** of peers, where **A** consists of the first 2*f*+1 peers and **B** consists of the remainder. As 2*f*+1 signatures are needed to confirm a transaction, under the normal case only 2*f*+1 peers are involved in transaction consensus; the remaining peers only join the validation when faults are exhibited in peers in set **A**. The 2*f*+1th peer is called the *proxy tail*.
 
 For normal (non-failure) cases, the transaction flow is shown as follows:
 

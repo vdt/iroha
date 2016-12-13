@@ -27,7 +27,7 @@ namespace event{
 
 class Event {
 public:
-  unsigned int order = 0;
+  unsigned long long order = 0;
   virtual void addSignature(const std::string& publicKey, const std::string& signature) = 0;
   virtual int getNumValidSignatures() = 0;
   virtual bool eventSignatureIsEmpty() = 0;

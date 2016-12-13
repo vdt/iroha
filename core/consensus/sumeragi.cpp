@@ -221,9 +221,9 @@ namespace sumeragi {
     void processTransaction(const std::unique_ptr<event::Event>& event) {
 
         logger::info("sumeragi", "processTransaction");
-        //if (!transaction_validator::isValid(event->getTx())) {
-        //    return; //TODO-futurework: give bad trust rating to nodes that sent an invalid event
-        //}
+        if (!transaction_validator::isValid(event->getTx())) { // TODO: the transaction itself has to be accessible here
+            return; //TODO-futurework: give bad trust rating to nodes that sent an invalid event
+        }
         logger::info("sumeragi", "validated");
         logger::info("sumeragi", "Add my signature...");
         
@@ -388,7 +388,7 @@ namespace sumeragi {
                 // Determine node order
                 determineConsensusOrder();
 
-                logger::info("sumeragi", "event queue not empty");
+                logger::info("sumeragi", "event queue is not empty");
 
                 auto events = repository::event::findAll();
                 logger::info("sumeragi", "event's size " + std::to_string(events.size()));
@@ -405,7 +405,7 @@ namespace sumeragi {
                 logger::info("sumeragi", "sorted " + std::to_string(events.size()));
                 for (auto& event : events) {
 
-                    logger::info("sumeragi", "evens order:" + std::to_string(event->order));
+                    logger::info("sumeragi", "event's order:" + std::to_string(event->order));
 
                     if (!transaction_validator::isValid(event)) {
                         continue;
