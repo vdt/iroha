@@ -36,9 +36,7 @@ namespace sumeragi {
     );
     void loop();
 
-    void getNextOrder(
-        const std::unique_ptr<event::Event> event
-    );
+    unsigned long long getNextOrder();
 
     void processTransaction(const std::unique_ptr<event::Event>& event);
 

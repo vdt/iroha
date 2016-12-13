@@ -166,7 +166,7 @@ namespace sumeragi {
 
         logger::info("sumeragi", "My key is " + peer::getMyIp());
                 
-        logger::info("sumeragi", "Sumeragi setted");
+        logger::info("sumeragi", "Sumeragi initialized");
 
         logger::info("sumeragi", "set number of validatingPeer");
         context->numValidatingPeers = context->validatingPeers.size();
@@ -191,7 +191,7 @@ namespace sumeragi {
             logger::info("sumeragi", "receive!");
             auto hash = event->getHash();
             logger::info("sumeragi", "received message! sig:[" + std::to_string(event->getNumValidSignatures()) +"]");
-            // WIP currently, unuse hash in event repository,
+            // WIP currently, unuse hash in event repository, //TODO:
             repository::event::add( hash, std::move(event));
         });
 
@@ -208,11 +208,15 @@ namespace sumeragi {
         logger::info("sumeragi", "initialize.....  complete!");
     }
 
+    /**
+     * Returns the order of this transaction, in the global transaction order.
+     *
+     * @return order of the transaction.
+     */
     unsigned long long getNextOrder() {
         return 0l;
-        //return merkle_transaction_repository::getLastLeafOrder() + 1;
+        //return merkle_transaction_repository::getLastLeafOrder() + 1; //TODO: this needs to have a mutex to prevent duplicate orders
     }
-    
 
     void processTransaction(const std::unique_ptr<event::Event>& event) {
 
@@ -220,7 +224,7 @@ namespace sumeragi {
         //if (!transaction_validator::isValid(event->getTx())) {
         //    return; //TODO-futurework: give bad trust rating to nodes that sent an invalid event
         //}
-        logger::info("sumeragi", "valied");
+        logger::info("sumeragi", "validated");
         logger::info("sumeragi", "Add my signature...");
         
         //detail::printIsSumeragi(context->isSumeragi);
@@ -228,7 +232,7 @@ namespace sumeragi {
         event->addSignature( peer::getMyPublicKey(), signature::sign(event->getHash(), peer::getMyPublicKey(), peer::getPrivateKey()).c_str());
 
         if (event->eventSignatureIsEmpty() && context->isSumeragi) {
-            logger::info("sumeragi", "signatures.empty() isSumragi");
+            logger::info("sumeragi", "signatures.empty() isSumeragi");
             // Determine the order for processing this event
             event->order = getNextOrder();
             logger::info("sumeragi", "new  order:" + std::to_string(event->order));
