@@ -95,6 +95,7 @@ Transaction validation consists of two phases:
  1. Validating the digital signature
  2. Validating the state information
 
+
 #### 2.6.2 Consensus events and processing order
 
 When broadcast, transactions are wrapped as consensus events. 
@@ -105,8 +106,9 @@ Consensus events, when received from the event queue, are processed in the follo
  2. Events ordered by the leader
  3. New events that need ordering, to be processed by the current leader
 
+### 2.7. Merkle tree and logical blocks
 
-### 2.7. Consensus
+### 2.8. Consensus
 
 Byzantine fault tolerant systems are engineered to tolerate *f* numbers of Byzantine faulty nodes in a network. Iroha introduces a Byzantine Fault Tolerant consensus algorithm called Sumeragi. It is heavily inspired by the B-Chain algorithm:
 
@@ -140,13 +142,13 @@ Consensus in Sumeragi is performed on individual transactions and on the global 
 
 When syncing nodes with each other, valid parts of the Merkle tree are shared until the roots match.
 
-### 2.8. Data synchronization and retrieval
+### 2.9. Data synchronization and retrieval
 
 The state with the Merkle root that has the most transactions in the Merkle tree and has 2*f*+1 signatures of validating servers is the most advanced state. 
 
-### Data permissioning
+### 2.10 Data permissioning
 
-## Hijiri: Trust system
+### 2.11 Hijiri: Trust system
 
 The trust system is based on rounds. At each round, validating peers that are registered with the membership service perform the following tasks to establish trust (reliability) ratings for the peers:
 
@@ -157,7 +159,7 @@ The trust system is based on rounds. At each round, validating peers that are re
 
 Which peers validate each other are based on the pairwise distance between hashes (e.g., ```sort(abs(hash && 0x0000ffff - publicKey && 0x0000ffff))```). The hashes are computed based on the public keys of the peers that are concatenated with the round number and then SHA-3 hashed. Rounds occur whenever the Merkle root is less than TODO:XXX. Results are shared in a separate Merkle tree, maintained independently of the transactions (so the systems can run in parallel).
 
-### Panics and view changes
+### 2.12 Panics and view changes
 
 
 

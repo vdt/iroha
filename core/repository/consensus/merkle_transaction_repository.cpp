@@ -47,7 +47,6 @@ namespace merkle_transaction_repository {
         return repository::world_state_repository::find(hash);
     }
 
-
     std::string calculateNewRootHash(const std::unique_ptr<event::Event>& event,
                                      std::vector<std::tuple<std::string, std::string>> &batchCommit) {
 
@@ -72,7 +71,7 @@ namespace merkle_transaction_repository {
                 batchCommit.push_back(std::tuple<std::string, std::string>(lastInsertion + "_parent", rightChild));
             }
 
-            // Propagate up the tree to the root
+            // Propagate up the tree to the root. NOTE: when we start here, tree depth is already 2.
             while (!parent.empty()) {
                 std::string newParentHash = hash::sha3_256_hex(leftChild + rightChild);
 
@@ -88,17 +87,17 @@ namespace merkle_transaction_repository {
 
             if (!batchCommit.empty()) { // TODO: this may not be the best comparison to use
                 batchCommit.push_back(std::tuple<std::string, std::string>("merkle_root", rightChild));
-                // TODO: delete old, unused nodes
+                // TODO: delete old, now unused nodes
             }
             return rightChild;
 
-        } else {
+        } else {  //
             std::string newLeftChild = event->getHash();
             std::string newParentHash = hash::sha3_256_hex(currHash);
 
             std::string oldParent = parent;
 
-            // Propagate up the tree to the root
+            // Propagate up the tree to the root. NOTE: when we start here, tree depth is already 2.
             while (!parent.empty()) {
 
                 if (!batchCommit.empty()) { // TODO: this may not be the best comparison to use

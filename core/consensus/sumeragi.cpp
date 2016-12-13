@@ -229,7 +229,7 @@ namespace sumeragi {
         logger::info("sumeragi", "Add my signature...");
         
         //detail::printIsSumeragi(context->isSumeragi);
-        event->addSignature( peer::getMyPublicKey(), signature::sign(event->getHash(), peer::getMyPublicKey(), peer::getPrivateKey()).c_str());
+        event->addSignature(peer::getMyPublicKey(), signature::sign(event->getHash(), peer::getMyPublicKey(), peer::getPrivateKey()).c_str());
 
         if (event->eventSignatureIsEmpty() && context->isSumeragi) {
             logger::info("sumeragi", "signatures.empty() isSumeragi");
