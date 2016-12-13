@@ -137,7 +137,7 @@ When syncing nodes with each other, valid parts of the Merkel tree are shared un
 
 The state with the Merkle root that has the most transactions in the Merkle tree and has 2*f*+1 signatures of validating servers is the most advanced state. 
 
-### Data permissions
+### Data permissioning
 
 ## Hijiri: Trust system
 
@@ -150,9 +150,13 @@ The trust system is based on rounds. At each round, validating peers that are re
 
 Which peers validate each other are based on the pairwise distance between hashes (e.g., ```sort(abs(hash && 0x0000ffff - publicKey && 0x0000ffff))```). The hashes are computed based on the public keys of the peers that are concatenated with the round number and then SHA-3 hashed. Rounds occur whenever the Merkle root is less than TODO:XXX. Results are shared in a separate Merkle tree, maintained independently of the transactions (so the systems can run in parallel).
 
+### Panics and view changes
+
+
+
 
 ## Appendix
 
 ### A.1. Developing for Iroha
 
-To ease development, Iroha makes use of the Python Fabric library (not to be confused with Hyperledger Fabric, the Python Fabric library enables running scripted commands on local and remote servers).
+To ease development, Iroha makes use of the Python Fabric library (not to be confused with Hyperledger Fabric, the Python Fabric library enables running scripted commands on local and remote servers).a
