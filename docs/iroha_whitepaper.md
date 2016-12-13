@@ -131,7 +131,7 @@ Consensus in Sumeragi is performed on individual transactions and on the global 
 * sign the updated Merkle root and the hash of the transaction contents
 * broadcast the tuple `(signed Merkle root, tx hash)`
 
-When syncing nodes with each other, valid parts of the Merkel tree are shared until the roots match.
+When syncing nodes with each other, valid parts of the Merkle tree are shared until the roots match.
 
 ### 2.8. Data synchronization and retrieval
 

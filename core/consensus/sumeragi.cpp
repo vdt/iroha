@@ -70,7 +70,7 @@ namespace sumeragi {
             }else{
                 logger::explore("sumeragi", "   /\\         /\\");
                 logger::explore("sumeragi", "   ||  I  am  ||");
-                logger::explore("sumeragi", "   ||   peer  ||");
+                logger::explore("sumeragi", "   || a peer  ||");
                 logger::explore("sumeragi", "   ||         ||");
                 logger::explore("sumeragi", "   AA         AA");
             }
@@ -228,7 +228,6 @@ namespace sumeragi {
         logger::info("sumeragi", "Add my signature...");
         
         //detail::printIsSumeragi(context->isSumeragi);
-        // Really need? blow "if statement" will be false anytime.
         event->addSignature( peer::getMyPublicKey(), signature::sign(event->getHash(), peer::getMyPublicKey(), peer::getPrivateKey()).c_str());
 
         if (event->eventSignatureIsEmpty() && context->isSumeragi) {
@@ -332,7 +331,7 @@ namespace sumeragi {
         }
         logger::info( "sumeragi", "broadcastEnd:"+ std::to_string(broadcastEnd));
         logger::info( "sumeragi", "broadcastStart:"+ std::to_string(broadcastStart));
-        // WIP issue hash event
+        // TODO: issue hash event
         //connection::sendAll(event->getHash()); //TODO: change this to only broadcast to peer range between broadcastStart and broadcastEnd
     }
 
@@ -345,7 +344,7 @@ namespace sumeragi {
 
     /**
      * The consensus order is based primarily on the trust scores. If two trust scores
-     * are the same, then the order (ascending) of the public keys for the servers are used.
+     * are the same, then the order (ascending) of the public keys for the servers is used.
      */
     void determineConsensusOrder() {
         // TODO: create getTrustScore() function. Until then, circle list
