@@ -348,7 +348,7 @@ namespace sumeragi {
      * are the same, then the order (ascending) of the public keys for the servers are used.
      */
     void determineConsensusOrder() {
-        // TODO: create getTrustScore() function. till then circle list
+        // TODO: create getTrustScore() function. Until then, circle list
         /*
         std::deque<
                 std::unique_ptr<peer::Node>
@@ -413,7 +413,7 @@ namespace sumeragi {
                     }
 
                     // Process transaction
-                    std::thread([&event]{ processTransaction(std::move(event)); }).join();
+                    std::thread([&event]{ processTransaction(std::move(event)); }).join(); //TODO: this should almost certainly be .detach()
                 }
             }
         }
