@@ -5,6 +5,7 @@
 namespace transaction{
     using command::Transfer;
     using command::Add;
+    using command::Update;
 
     template <>
     Transaction<Transfer<object::Asset>>::Transaction(
@@ -13,10 +14,11 @@ namespace transaction{
         Transfer(
             obj.dictSub["command"]
         ),
-        senderPubkey(obj.dictSub["senderPublicKey"].str),
-        hash(obj.dictSub["hash"].str)
+        hash(obj.dictSub["hash"].str),
+        senderPubkey(obj.dictSub["senderPublicKey"].str)
     {
-        
+        timestamp = obj.dictSub["timestamp"].integer;
+
         std::vector<Object> txSigs = obj.dictSub["txSignatures"].listSub;
         for(auto&& sig : txSigs){
             txSignatures.push_back(txSignature(sig.dictSub["publicKey"].str,sig.dictSub["signature"].str));
@@ -33,6 +35,7 @@ namespace transaction{
     {
         senderPubkey = obj.dictSub["senderPublicKey"].str;
         hash = obj.dictSub["hash"].str;
+        timestamp = obj.dictSub["timestamp"].integer;
         std::vector<Object> txSigs = obj.dictSub["txSignatures"].listSub;
         for(auto&& sig : txSigs){
             txSignatures.push_back(txSignature(sig.dictSub["publicKey"].str,sig.dictSub["signature"].str));
@@ -49,6 +52,23 @@ namespace transaction{
     {
         senderPubkey = obj.dictSub["senderPublicKey"].str;
         hash = obj.dictSub["hash"].str;
+        timestamp = obj.dictSub["timestamp"].integer;
+        std::vector<Object> txSigs = obj.dictSub["txSignatures"].listSub;
+        for(auto&& sig : txSigs){
+            txSignatures.push_back(txSignature(sig.dictSub["publicKey"].str,sig.dictSub["signature"].str));
+        }
+    }
+    template <>
+    Transaction<Update<object::Asset>>::Transaction(
+        Object obj
+    ):
+        Update(
+            obj.dictSub["command"]
+        )
+    {
+        senderPubkey = obj.dictSub["senderPublicKey"].str;
+        hash = obj.dictSub["hash"].str;
+        timestamp = obj.dictSub["timestamp"].integer;
         std::vector<Object> txSigs = obj.dictSub["txSignatures"].listSub;
         for(auto&& sig : txSigs){
             txSignatures.push_back(txSignature(sig.dictSub["publicKey"].str,sig.dictSub["signature"].str));
@@ -62,13 +82,14 @@ namespace transaction{
         const std::string& name,
         const int& value
     ):
-        senderPubkey(senderPubkey),
+        timestamp(datetime::unixtime()),
         Transfer(
             senderPubkey,
             receiverPubkey,
             name,
             value
-        )
+        ),
+        senderPubkey(senderPubkey)
     {}
 
     template <>
@@ -79,13 +100,14 @@ namespace transaction{
         const unsigned long long& value,
         const unsigned int& precision
     ):
-        senderPubkey(senderPubkey),
+        timestamp(datetime::unixtime()),
         Add(
             domain,
             name,
             value,
             precision
-        )    
+        ),
+        senderPubkey(senderPubkey)
     {}
 
     template <>
@@ -94,11 +116,27 @@ namespace transaction{
         const std::string& ownerPublicKey,
         const std::string& name
     ):
-        senderPubkey(senderPubkey),
+        timestamp(datetime::unixtime()),
         Add(
             ownerPublicKey,
             name
-        )    
+        ),
+        senderPubkey(senderPubkey)
+    {}
+
+    template <>
+    Transaction<Update<object::Asset>>::Transaction(
+        const std::string& ownerPublicKey,
+        const std::string& name,
+        const unsigned long long& value
+    ):
+        timestamp(datetime::unixtime()),
+        senderPubkey(ownerPublicKey),
+        Update(
+                ownerPublicKey,
+                name,
+                value
+        )
     {}
 
 }

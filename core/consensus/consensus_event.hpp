@@ -73,13 +73,28 @@ public:
         const std::string& name
     );
 
+    explicit ConsensusEvent(
+        const std::string& ownerPublicKey,
+        const std::string& name,
+        const unsigned long long& value
+    );
 
     using Rule = json_parse::Rule;
     using Type = json_parse::Type;
     using Object = json_parse::Object;
 
+    explicit ConsensusEvent(
+            Object obj
+    ):
+        T(obj.dictSub["transaction"])
+    {
+        order = obj.dictSub["order"].integer;
+        std::vector<Object> eventSigs = obj.dictSub["eventSignatures"].listSub;
+        for(auto&& sig : eventSigs){
+            _eventSignatures.push_back(eventSignature(sig.dictSub["publicKey"].str, sig.dictSub["signature"].str));
+        }
+    }
 
-    explicit ConsensusEvent(Object obj);
 
     void addSignature(const std::string& publicKey, const std::string& signature){
         _eventSignatures.push_back(eventSignature(publicKey, signature));
@@ -89,7 +104,7 @@ public:
         return T::getHash();
     }
 
-    int getNumValidSignatures() {
+    unsigned int getNumValidSignatures() {
         return std::count_if(
                 _eventSignatures.begin(), _eventSignatures.end(),
             [hash = getHash()](eventSignature sig){
@@ -100,6 +115,7 @@ public:
     bool eventSignatureIsEmpty(){
         return _eventSignatures.empty();
     }
+
 
     std::vector<std::tuple<std::string,std::string>> eventSignatures(){
         std::vector<std::tuple<std::string,std::string>> res;
@@ -135,6 +151,10 @@ public:
         rule.dictSub.insert( std::make_pair( "eventSignatures", eventSigs));
         rule.dictSub.insert( std::make_pair( "transaction", T::getJsonParseRule()));
         return rule;
+    }
+
+    void execution(){
+        T::execution();
     }
 
 };
