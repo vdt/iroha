@@ -132,5 +132,4 @@ namespace event{
     void ConsensusEvent<Transaction<Add<object::Domain>>>::execution(){
         logger::info("execution","add! Asset");
     }
-
 };
