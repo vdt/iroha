@@ -199,13 +199,8 @@ Refer to [this guide](./docs/using_docker.md).
 
 ## Installation
 ```
-<<<<<<< HEAD
-$ git submodules init
-$ git submodules update
-=======
 $ git submodule init
 $ git submodule update
->>>>>>> develop
 $ mkdir build
 $ cd build
 $ cmake ..
