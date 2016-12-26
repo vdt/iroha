@@ -71,14 +71,13 @@ namespace sumeragi {
         }
     );
 
-
     namespace detail{
 
         unsigned int getNumValidSignatures(const Event::ConsensusEvent& event){
             unsigned int sum = 0;
             for(auto&& esig: event.eventsignatures()){
                 if(signature::verify( esig.signature(), event.transaction().hash(), esig.publickey())){
-                    sum++;
+                    ++sum; // TODO: does this count the same signature multiple times, if the same valid signature is prepended?
                 }
             }
             return sum;
@@ -117,7 +116,7 @@ namespace sumeragi {
                 logger::explore("sumeragi", "   AA         AA");
             }
         }
-        void printJudge(int numValidSignatures,int numValidationPeer,int faulty){
+        void printJudge(int numValidSignatures, int numValidationPeer, int faulty){
             std::array<std::string, 5> lines;
             for(int i=0;i< numValidationPeer;i++){
                 if(i < numValidSignatures){
@@ -135,7 +134,7 @@ namespace sumeragi {
 
                 }
             }
-            for(int i=0;i<5;i++){
+            for(int i=0; i<5; ++i){
                 logger::explore("sumeragi", lines[i]);
             }
             std::string line = "";
@@ -212,7 +211,7 @@ namespace sumeragi {
 
         logger::info("sumeragi", "My key is " + peer::getMyIp());
                 
-        logger::info("sumeragi", "Sumeragi setted");
+        logger::info("sumeragi", "Sumeragi intialization complete");
 
         logger::info("sumeragi", "set number of validatingPeer");
         context->numValidatingPeers = context->validatingPeers.size();
@@ -457,9 +456,9 @@ namespace sumeragi {
     }
 
 
-    void loop() {
-        logger::info("sumeragi", "=+=");
-        logger::info("sumeragi", "start main loop");
+//    void loop() {
+//        logger::info("sumeragi", "=+=");
+//        logger::info("sumeragi", "start main loop");
 
 //        while (true) {  // 千五百秋　TODO: replace with callback linking the event repository?
 //            if(!repository::event::empty()) {
@@ -495,6 +494,6 @@ namespace sumeragi {
 //                }
 //            }
 //        }
-    }
+//    }
 
 };  // namespace sumeragi
