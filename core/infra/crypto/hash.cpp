@@ -29,12 +29,12 @@ namespace hash {
     unsigned char output[64];
 
     SHA3_256(
-      reinterpret_cast<unsigned char *>(output),
+      output,
       reinterpret_cast<const unsigned char *>(message.c_str()),
-      reinterpret_cast<size_t>(message.size())
+      message.size()
     );
 
-    std::string res = "";
+    std::string res;
     unsigned char front, back;
     for (int i = 0; i < 32; i++) {
       front = (output[i] & 240) >> 4;
@@ -52,11 +52,11 @@ namespace hash {
     unsigned char output[128];
     SHA3_512(
       output,
-      (const unsigned char *)message.c_str(),
+      reinterpret_cast<const unsigned char *>(message.c_str()),
       message.size()
     );
 
-    std::string res = "";
+    std::string res;
     unsigned char front, back;
     for (int i = 0; i < 64; i++) {
       front = (output[i] & 240) >> 4;

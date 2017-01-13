@@ -50,8 +50,8 @@ class ConsensusEvent: public T {
             std::string pubKey,
             std::string sig
         ):
-                publicKey(pubKey),
-                signature(sig)
+            publicKey(pubKey),
+            signature(sig)
         {}
     };
 
@@ -71,10 +71,10 @@ public:
         _eventSignatures.push_back(eventSignature(publicKey, signature));
     }
 
-    std::vector<std::tuple<std::string,std::string>> eventSignatures() const{
-        std::vector<std::tuple<std::string,std::string>> res;
+    std::vector<std::tuple<std::string, std::string>> eventSignatures() const {
+        std::vector<std::tuple<std::string, std::string>> res;
         for(const auto& sig: _eventSignatures){
-            res.push_back(std::make_tuple(sig.publicKey,sig.signature));
+            res.emplace_back(sig.publicKey, sig.signature);
         }
         return res;
     };
