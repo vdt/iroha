@@ -19,11 +19,13 @@ limitations under the License.
 #include "../../server/http_server.hpp"
 #include "../../vendor/Cappuccino/cappuccino.hpp"
 #include "../../util/logger.hpp"
+#include "../../util/string_util.hpp"
+#include "../../util/use_optional.hpp"
+#include "../../util/assert.hpp"
 #include "../../service/peer_service.hpp"
 #include "../../infra/protobuf/convertor.hpp"
 
 #include "../../consensus/connection/connection.hpp"
-
 #include "../../repository/consensus/transaction_repository.hpp"
 
 
@@ -43,185 +45,209 @@ namespace http {
 
     json responseError(std::string message){
         return json({
-                            {"message", std::move(message)},
-                            {"status", 400}
-                    });
+            {"message", std::move(message)},
+            {"status", 400}
+        });
     }
 
-    enum class RequestType{
+    enum class RequestType {
         Int,
         Str,
         Bool,
         Float
     };
 
-    std::vector<std::string> split(const std::string& str, const std::string& delim) noexcept{
-        std::vector<std::string> result;
-        std::string::size_type pos = 0;
-        while(pos != std::string::npos) {
-            auto p = str.find(delim, pos);
-            if(p == std::string::npos){
-                result.push_back(str.substr(pos));
-                break;
-            }else{
-                result.push_back(str.substr(pos, p - pos));
-            }
-            pos = p + delim.size();
-        }
-        return result;
-    }
-
     void server() {
+
+        using string_util::split;
+
         logger::info("server") << "initialize server!";
-        Cappuccino::Cappuccino( 0, nullptr);
+        Cappuccino::Cappuccino(0, nullptr);
 
         Cappuccino::route<Cappuccino::Method::POST>("/account/register", [](std::shared_ptr<Request> request) -> Response {
+
             auto res = Response(request);
-            auto data = request->json();
-            std::string uuid;
+            const auto data_ = request->json();
 
-            if(!data.empty()){
-                try{
-
-                    const auto publicKey = data["publicKey"].get<std::string>();
-                    const auto alias     = data["alias"].get<std::string>();
-                    const auto timestamp = data["timestamp"].get<int>();
-
-                    uuid = hash::sha3_256_hex(publicKey);
-                    if(repository::account::findByUuid(uuid).publicKey.empty()) {
-
-                        auto event = ConsensusEvent < Transaction < Add < object::Account >> > (
-                            publicKey.c_str(),
-                            publicKey.c_str(),
-                            alias.c_str()
-                        );
-
-                        event.addTxSignature(
-                            peer::getMyPublicKey(),
-                            signature::sign(event.getHash(), peer::getMyPublicKey(), peer::getPrivateKey()).c_str()
-                        );
-
-                        connection::send(peer::getMyIp(), convertor::encode(event));
-
-                    }else{
-                        res.json(json({
-                          {"status",  400},
-                          {"message", "duplicate user"}
-                        }));
-                        return res;
-                    }
-                }catch(...) {
-                    res.json(json({
-                      {"status",  400},
-                      {"message", "Invalied json type or value"}
-                    }));
-                    return res;
-                }
-            }else{
+            if (data_ == nullopt) {
                 res.json(json({
-                  {"status",  400},
-                  {"message", "Invalied json"}
+                    {"status",  400},
+                    {"message", "Invalid json"}
                 }));
                 return res;
             }
-            res.json(json({
-              {"status",  200},
-              {"message", "successful"},
-              {"uuid",   uuid}
-            }));
 
-            return res;
+            try {
+
+                const auto& data = *data_;
+
+                const auto publicKey    = data["publicKey"].get<std::string>();
+                const auto alias        = data["alias"].get<std::string>();
+                const auto timestamp    = data["timestamp"].get<int>();
+
+                const auto uuid = hash::sha3_256_hex(publicKey);
+
+                if ( repository::account::findByUuid(uuid) ) {
+                    res.json(json({
+                        {"status",  400},
+                        {"message", "duplicate user"}
+                    }));
+                    return res;
+                }
+
+                auto event = ConsensusEvent < Transaction < Add < object::Account >> > (
+                    publicKey.c_str(),
+                    publicKey.c_str(),
+                    alias.c_str()
+                );
+
+                event.addTxSignature(
+                    peer::getMyPublicKey(),
+                    signature::sign(event.getHash(), peer::getMyPublicKey(), peer::getPrivateKey())
+                );
+
+                connection::send(peer::getMyIp(), convertor::encode(event));
+
+                res.json(json({
+                    {"status",  200},
+                    {"message", "successful"},
+                    {"uuid",    uuid}
+                }));
+                return res;
+
+            } catch(...) {
+                res.json(json({
+                    {"status",  400},
+                    {"message", "Invalid json type or value"}
+                }));
+                return res;
+            }
         });
 
-        Cappuccino::route<Cappuccino::Method::GET>( "/account",[](std::shared_ptr<Request> request) -> Response{
-            std::string uuid = request->params("uuid");
+        Cappuccino::route<Cappuccino::Method::GET>( "/account", [](std::shared_ptr<Request> request) -> Response {
+
+            const auto uuid_ = request->params("uuid");
+
+            if (uuid_ == nullopt) {
+                IROHA_FATAL(
+                    logger::fatal("http server with cappuccino [GET] /account") << "No such uuid";
+                );
+            }
+
+            const auto& uuid = *uuid_;
+
             auto res = Response(request);
 
             logger::debug("Cappuccino") << "param's uuid is " << uuid;
-            object::Account account = repository::account::findByUuid(uuid);
+            auto account_ = repository::account::findByUuid(uuid);
+
+            if ( account_ == nullopt ) {
+                res.json(json({
+                    {"status", 400},
+                    {"message", "Invalid json"}
+                }));
+                return res;
+            }
+
+            const auto& account = *account_;
 
             logger::debug("Cappuccino") << "name: "         << account.name;
             logger::debug("Cappuccino") << "publicKey: "    << account.publicKey;
 
             json assets = json::array();
-            for(auto&& as: account.assets){
-                json asset = json::object();
-                asset["value"] = std::get<1>(as);
-                asset["name"] = std::get<0>(as);
+            for (auto&& as: account.assets) {
+                json asset      = json::object();
+                asset["name"]   = std::get<0>(as);
+                asset["value"]  = std::get<1>(as);
                 assets.push_back(asset);
             }
 
             res.json(json({
-                  {"status",  200},
-                  {"alias", account.name},
-                  {"assets", assets}
+                {"status",  200},
+                {"alias",   account.name},
+                {"assets",  assets}
             }));
 
             return res;
         });
 
-        Cappuccino::route<Cappuccino::Method::POST>( "/asset/operation",[](std::shared_ptr<Request> request) -> Response{
+        Cappuccino::route<Cappuccino::Method::POST>( "/asset/operation", [](std::shared_ptr<Request> request) -> Response {
             auto res = Response(request);
-            auto data = request->json();
-            if(!data.empty()){
-                try{
-                    const auto assetUuid = data["asset-uuid"].get<std::string>();
-                    const auto timestamp = data["timestamp"].get<int>();
-                    const auto signature = data["signature"].get<std::string>();
-                    const auto command   = data["params"]["command"].get<std::string>();
-                    const auto value     = data["params"]["value"].get<std::string>();
-                    const auto sender    = data["params"]["sender"].get<std::string>();
-                    const auto receiver  = data["params"]["receiver"].get<std::string>();
+            auto data_ = request->json();
 
-                    auto event = ConsensusEvent<Transaction<Transfer<Asset>>>(
-                        sender.c_str(),
-                        sender.c_str(),
-                        receiver.c_str(),
-                        assetName,
-                        std::atoi(value.c_str())
-                    );
-
-                    event.addTxSignature(
-                        peer::getMyPublicKey(),
-                        signature::sign(event.getHash(), peer::getMyPublicKey(), peer::getPrivateKey()).c_str()
-                    );
-
-                    connection::send(peer::getMyIp(), convertor::encode(event));
-
-                }catch(...) {
-                    res.json(json({
-                      {"status",  400},
-                      {"message", "Invalied json type or value"}
-                    }));
-                    return res;
-                }
-            }else{
+            if (data_ == nullopt) {
                 res.json(json({
-                  {"status",  400},
-                  {"message", "Invalied json"}
+                    {"status",  400},
+                    {"message", "Invalid json"}
                 }));
                 return res;
             }
 
-            res.json(json({
-              {"status",  200},
-              {"message", "Ok"}
-            }));
-            return res;
+            const auto& data = *data_;
+
+            try {
+
+                const auto assetUuid = data["asset-uuid"].get<std::string>();
+                const auto timestamp = data["timestamp"].get<int>();
+                const auto signature = data["signature"].get<std::string>();
+                const auto command   = data["params"]["command"].get<std::string>();
+                const auto value     = data["params"]["value"].get<std::string>();
+                const auto sender    = data["params"]["sender"].get<std::string>();
+                const auto receiver  = data["params"]["receiver"].get<std::string>();
+
+                auto event = ConsensusEvent<Transaction<Transfer<Asset>>>(
+                    sender.c_str(),
+                    sender.c_str(),
+                    receiver.c_str(),
+                    assetName,
+                    std::stoull(value)
+                );
+
+                event.addTxSignature(
+                    peer::getMyPublicKey(),
+                    signature::sign(event.getHash(), peer::getMyPublicKey(), peer::getPrivateKey())
+                );
+
+                connection::send(peer::getMyIp(), convertor::encode(event));
+
+                res.json(json({
+                    {"status",  200},
+                    {"message", "Ok"}
+                }));
+                return res;
+
+            } catch(...) {
+                res.json(json({
+                    {"status",  400},
+                    {"message", "Invalid json"}
+                }));
+                return res;
+            }
         });
+        
+        Cappuccino::route<Cappuccino::Method::GET>( "/history/transaction", [](std::shared_ptr<Request> request) -> Response {
 
-        Cappuccino::route<Cappuccino::Method::GET>( "/history/transaction",[](std::shared_ptr<Request> request) -> Response{
-            std::string uuid = request->params("uuid");
+            const auto uuid_ = request->params("uuid");
+
+            if (uuid_ == nullopt) {
+                IROHA_FATAL(
+                    logger::fatal("http server with cappuccino [GET] /history/transaction")
+                        << "No such uuid";
+                );
+            }
+
+            const auto& uuid = *uuid_;
+
             auto res = Response(request);
-
+            
             auto tx_json = json::array();
-            for(Event::Transaction protoTx: repository::transaction::findAll()){
+            for (Event::Transaction protoTx: repository::transaction::findAll()){
                 json transaction_json = json::object();
 
                 auto data = split(protoTx.type(),",");
 
-                if(protoTx.type() == "Add"){
-                    if(protoTx.has_asset()) {
+                if (protoTx.type() == "Add") {
+                    if (protoTx.has_asset()) {
                         auto event_tx =  convertor::detail::decodeTransaction2ConsensusEvent<Add<Asset>>(protoTx);
                         transaction_json["params"] = json::object();
                         transaction_json["params"]["command"] = "Add";
@@ -230,7 +256,7 @@ namespace http {
                         transaction_json["params"]["sender"]  = event_tx.senderPubkey;
                         transaction_json["params"]["value"]   = event_tx.value;
                         transaction_json["params"]["timestamp"] = event_tx.timestamp;
-                    }else if(protoTx.has_account()){
+                    } else if (protoTx.has_account()) {
                         auto event_tx = convertor::detail::decodeTransaction2ConsensusEvent<Add<Account>>(protoTx);
                         transaction_json["params"] = json::object();
                         transaction_json["params"]["command"] = "Add";
@@ -240,8 +266,8 @@ namespace http {
                         transaction_json["params"]["value"]   = event_tx.name;
                         transaction_json["params"]["timestamp"] = event_tx.timestamp;
                     }
-                }else if(protoTx.type() == "Transfer"){
-                    if(protoTx.has_domain()) {
+                } else if(protoTx.type() == "Transfer") {
+                    if (protoTx.has_domain()) {
                         auto event_tx = convertor::detail::decodeTransaction2ConsensusEvent<Transfer<Asset>>(protoTx);
                         transaction_json["params"] = json::object();
                         transaction_json["params"]["command"]   = "Add";
@@ -257,8 +283,8 @@ namespace http {
             }
 
             res.json(json({
-              {"status",  200},
-              {"history", tx_json}
+                {"status",  200},
+                {"history", tx_json}
             }));
             return res;
         });

@@ -19,6 +19,7 @@ See the License for the specific language governing permissions and
 #include "transaction_repository.hpp"
 #include "../../consensus/consensus_event.hpp"
 #include "../../crypto/base64.hpp"
+#include "../../util/use_optional.hpp"
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -131,7 +132,7 @@ namespace repository{
         void add(const std::string &key,const Event::ConsensusEvent& tx){
             world_state_repository::add("transaction_" + key, t2s(tx.transaction()));
         }
-
+        
         std::vector<Event::Transaction> findAll(){
             auto data = world_state_repository::findByPrefix("transaction_");
             std::vector<Event::Transaction> res;
@@ -141,9 +142,10 @@ namespace repository{
             return res;
         }
 
-        Event::Transaction find(std::string key){
+        optional<Event::Transaction> find(std::string key){
             std::string txKey = "transaction_" + key;
-            return s2t(world_state_repository::find(txKey));
+            const auto r = world_state_repository::find(txKey);
+            return r ? make_optional(s2t(*r)) : nullopt;
         }
 
 

@@ -21,6 +21,8 @@ limitations under the License.
 #include "../account_repository.hpp"
 #include "../../world_state_repository.hpp"
 
+#include "../../../util/use_optional.hpp"
+#include "../../../util/assert.hpp"
 
 namespace repository{
     namespace account {
@@ -31,9 +33,15 @@ namespace repository{
             const std::string&  assetName,
             std::int64_t        newValue
         ){
-            auto account = world_state_repository::find(uuid);
             Event::Account protoAccount;
-            protoAccount.ParseFromString(account);
+
+            if (auto account = world_state_repository::find(uuid)) {
+                protoAccount.ParseFromString(*account);
+            } else {
+                IROHA_FATAL(
+                    logger::fatal("account repository") << "account is invalid."
+                );
+            }
 
             for (int i = 0;i < protoAccount.assets_size(); i++) {
                 if (protoAccount.assets(i).name() == assetName) {
@@ -46,16 +54,17 @@ namespace repository{
             world_state_repository::update(uuid, strAccount);
         }
 
-        object::Account findByUuid(const std::string& uuid) {
+        optional<object::Account> findByUuid(const std::string& uuid) {
             auto serializedAccount = world_state_repository::find(uuid);
             auto account = world_state_repository::find(uuid);
-            logger::debug("AccountRepository") << " data:" << account;
-            if (account != "") {
+            if (account != nullopt) {
+                logger::debug("AccountRepository") << " data:" << *account;
                 Event::Account protoAccount;
-                protoAccount.ParseFromString(account);
-                return convertor::detail::decodeObject(protoAccount);
+                protoAccount.ParseFromString(*account);
+                return make_optional(convertor::detail::decodeObject(protoAccount));
             } else {
-                return object::Account();
+                logger::debug("AccountRepository") << " data: (none)";
+                return nullopt;
             }
         }
 

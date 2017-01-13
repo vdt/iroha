@@ -19,6 +19,7 @@ See the License for the specific language governing permissions and
 #define IROHA_TRANSACTION_REPOSITORY_HPP
 
 #include "../../model/transaction.hpp"
+#include "../../util/use_optional.hpp"
 #include "../../infra/protobuf/convertor.hpp"
 
 namespace repository{
@@ -28,7 +29,7 @@ namespace repository{
 
         std::vector<Event::Transaction> findAll();
 
-        Event::Transaction find(std::string key);
+        optional<Event::Transaction> find(std::string key);
 
         std::vector<Event::Transaction> findByAssetName(std::string name);
 

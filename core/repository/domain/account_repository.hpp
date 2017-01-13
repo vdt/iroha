@@ -23,6 +23,7 @@ limitations under the License.
 
 #include "../../model/objects/account.hpp"
 #include "../../model/state/account.hpp"
+#include "../../util/use_optional.hpp"
 
 namespace repository{
     namespace account {
@@ -34,7 +35,7 @@ namespace repository{
             long newValue
         );
 
-        object::Account findByUuid(const std::string& uuid);
+        optional<object::Account> findByUuid(const std::string& uuid);
 
         bool add(
             std::string &publicKey,

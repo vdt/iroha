@@ -21,6 +21,7 @@ limitations under the License.
 #include <vector>
 #include <memory>
 #include <string>
+#include "../util/use_optional.hpp"
 
 namespace repository {
 
@@ -44,14 +45,7 @@ namespace repository {
 
       std::vector<std::string> findByPrefix(const std::string& prefix);
 
-      std::string find(const std::string &key);
-
-      std::string findOrElse(
-          const std::string &key,
-          const std::string &defaultValue
-      );
-
-      bool exists(const std::string &key);
+      optional<std::string> find(const std::string &key);
   };
 
 }; // namespace repository
