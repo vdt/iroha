@@ -17,7 +17,8 @@ limitations under the License.
 #include "../../repository/world_state_repository.hpp"
 #include "../../util/exception.hpp"
 
-#include "../../../util/logger.hpp"
+#include "../../util/logger.hpp"
+#include "../../util/use_optional.hpp"
 
 #include <leveldb/write_batch.h>
 #include <leveldb/db.h>
@@ -41,25 +42,25 @@ namespace repository {
 
       namespace detail {
 
-              static std::unique_ptr<leveldb::DB> db = nullptr;
+          static std::unique_ptr<leveldb::DB> db = nullptr;
 
-              bool loggerStatus(leveldb::Status const status) {
-                  if (!status.ok()) {
-                      logger::info("WorldStateRepositoryWithLeveldb") << status.ToString();
-                      return false;
-                  }
-                  return true;
+          bool loggerStatus(leveldb::Status const status) {
+              if (!status.ok()) {
+                  logger::info("WorldStateRepositoryWithLeveldb") << status.ToString();
+                  return false;
               }
-
-              void loadDb() {
-                  leveldb::DB *tmpDb;
-                  leveldb::Options options;
-                  options.error_if_exists = false;
-                  options.create_if_missing = true;
-                  loggerStatus(leveldb::DB::Open(options, "/tmp/iroha_ledger", &tmpDb)); //TODO: This path should be configurable
-                  db.reset(tmpDb);
-              }
+              return true;
           }
+
+          void loadDb() {
+              leveldb::DB *tmpDb;
+              leveldb::Options options;
+              options.error_if_exists = false;
+              options.create_if_missing = true;
+              loggerStatus(leveldb::DB::Open(options, "/tmp/iroha_ledger", &tmpDb)); //TODO: This path should be configurable
+              db.reset(tmpDb);
+          }
+      }
 
       bool add(const std::string &key, const std::string &value) {
           if (nullptr == detail::db) {
@@ -148,7 +149,7 @@ namespace repository {
           return detail::loggerStatus(detail::db->Delete(leveldb::WriteOptions(), key));
       }
 
-      std::string find(const std::string &key) {
+      optional<std::string> find(const std::string &key) {
           if (nullptr == detail::db) {
               detail::loadDb();
           }
@@ -156,37 +157,11 @@ namespace repository {
           std::string readData;
           detail::loggerStatus(detail::db->Get(leveldb::ReadOptions(), key, &readData));
           if (readData != "") {
-              return readData;
+              return make_optional(readData);
           } else {
-              return "";
+              return nullopt;
           }
       }
 
-      std::string findOrElse(
-              const std::string &key,
-              const std::string &defaultValue
-      ) {
-          if (nullptr == detail::db) {
-              detail::loadDb();
-          }
-
-          std::string result = "";
-          detail::loggerStatus(detail::db->Get(leveldb::ReadOptions(), key, &result));
-          if (result == "") {
-              return defaultValue;
-          } else {
-              return result;
-          }
-      }
-
-      bool exists(const std::string &key) {
-          if (nullptr == detail::db) {
-              detail::loadDb();
-          }
-
-          std::string result = "";
-          detail::loggerStatus(detail::db->Get(leveldb::ReadOptions(), key, &result));
-          return result == "";
-      }
-  };
-};
+  }
+}
