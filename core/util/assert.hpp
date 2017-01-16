@@ -22,7 +22,7 @@ limitations under the License.
 #define IROHA_ASSERT_TRUE(condition, lggr) \
     if (! (condition) ) { lggr; exit(EXIT_FAILURE); }
 
-#define IROHA_ASSERT_FALSE(condition, lgr) \
+#define IROHA_ASSERT_FALSE(condition, lggr) \
     if ( (condition) )  { lggr; exit(EXIT_FAILURE); }
 
 #define IROHA_FATAL(lggr) \
