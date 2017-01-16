@@ -67,9 +67,9 @@ namespace http {
         Cappuccino::route<Cappuccino::Method::POST>("/account/register", [](std::shared_ptr<Request> request) -> Response {
 
             auto res = Response(request);
-            const auto data_ = request->json();
+            const auto data = request->json();
 
-            if (data_ == nullopt) {
+            if (data.empty()) {     // TODO: use optional type
                 res.json(json({
                     {"status",  400},
                     {"message", "Invalid json"}
@@ -78,8 +78,6 @@ namespace http {
             }
 
             try {
-
-                const auto& data = *data_;
 
                 const auto publicKey    = data["publicKey"].get<std::string>();
                 const auto alias        = data["alias"].get<std::string>();
@@ -126,15 +124,13 @@ namespace http {
 
         Cappuccino::route<Cappuccino::Method::GET>( "/account", [](std::shared_ptr<Request> request) -> Response {
 
-            const auto uuid_ = request->params("uuid");
+            const auto uuid = request->params("uuid");
 
-            if (uuid_ == nullopt) {
+            if (uuid == "INVALID") {    // TODO: Replace optional type (change cappuccino lib)
                 IROHA_FATAL(
                     logger::fatal("http server with cappuccino [GET] /account") << "No such uuid";
                 );
             }
-
-            const auto& uuid = *uuid_;
 
             auto res = Response(request);
 
@@ -173,17 +169,15 @@ namespace http {
 
         Cappuccino::route<Cappuccino::Method::POST>( "/asset/operation", [](std::shared_ptr<Request> request) -> Response {
             auto res = Response(request);
-            auto data_ = request->json();
+            auto data = request->json();
 
-            if (data_ == nullopt) {
+            if (data.empty()) { // TODO: Replace it with optional type
                 res.json(json({
                     {"status",  400},
                     {"message", "Invalid json"}
                 }));
                 return res;
             }
-
-            const auto& data = *data_;
 
             try {
 
@@ -227,16 +221,14 @@ namespace http {
         
         Cappuccino::route<Cappuccino::Method::GET>( "/history/transaction", [](std::shared_ptr<Request> request) -> Response {
 
-            const auto uuid_ = request->params("uuid");
+            const auto uuid = request->params("uuid");
 
-            if (uuid_ == nullopt) {
+            if (uuid == "INVALID") {    // TODO: Replace with optional type
                 IROHA_FATAL(
                     logger::fatal("http server with cappuccino [GET] /history/transaction")
                         << "No such uuid";
                 );
             }
-
-            const auto& uuid = *uuid_;
 
             auto res = Response(request);
             
