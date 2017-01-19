@@ -20,7 +20,7 @@ dependencies:
     - ~/docker
   override:
     # one way to cache iroha-dev container is to save it to tar image. 2 mins vs 10 mins without caching.
-    - if [[ -e ~/docker/iroha-dev.tar ]]; then docker load -i ~/docker/iroha-dev.tar; else docker build --rm=false -t hyperledger/iroha-dev ${IROHA_HOME}/docker/dev fi
+    - if [[ -e ~/docker/iroha-dev.tar ]]; then docker load -i ~/docker/iroha-dev.tar; else docker build --rm=false -t hyperledger/iroha-dev ${IROHA_HOME}/docker/dev; fi
     # build iroha-dev (if it is in cache, this step will be skipped) and iroha-docker (production) images
     - docker run -it -v ${IROHA_HOME}/docker/build:/build -v ${IROHA_HOME}:/opt/iroha hyperledger/iroha-dev sh << COMMANDS
           cd /opt/iroha
