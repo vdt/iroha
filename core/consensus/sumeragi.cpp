@@ -79,7 +79,7 @@ namespace sumeragi {
             std::uint32_t sum = 0;
             for (auto&& esig: event.eventsignatures()) {
                 if (signature::verify(esig.signature(), event.transaction().hash(), esig.publickey())) {
-                    sum++;
+                    ++sum;
                 }
             }
             return sum;
@@ -222,6 +222,9 @@ namespace sumeragi {
         connection::receive([](const std::string& from, Event::ConsensusEvent& event) {
             logger::info("sumeragi") << "receive!";
             logger::info("sumeragi") << "received message! sig:[" << event.eventsignatures_size() << "]";
+            //TODO:
+            // 1) sign transaction
+            // 2) reply to "from" with signature
 
             // send processTransaction(event) as a task to processing pool
             // this returns std::future<void> object
@@ -377,8 +380,7 @@ namespace sumeragi {
                     connection::sendAll(std::move(event)); // TODO: Think In Process
                 }
 
-                setAwkTimer(3, [&](){
-                //setAwkTimer(3000, [&](){
+                setAwkTimer(3000, [&](){
                     if (!merkle_transaction_repository::leafExists( event.transaction().hash())) {
                         panic(event);
                     }
@@ -467,47 +469,6 @@ namespace sumeragi {
         }
         */
         context->isSumeragi = context->validatingPeers.at(0)->getPublicKey() == context->myPublicKey;
-    }
-
-
-    void loop() {
-        logger::info("sumeragi")    <<  "=+=";
-        logger::info("sumeragi")    <<  "start main loop";
-
-//        while (true) {  // 千五百秋　TODO: replace with callback linking the event repository?
-//            if(!repository::event::empty()) {
-//                // Determine node order
-//                determineConsensusOrder();
-//
-//                logger::info("sumeragi")  <<  "event queue not empty";
-//
-//                auto events = repository::event::findAll();
-//                /*
-//                logger::info("sumeragi")  <<  "event's size " <<  events.size();
-//
-//                // Sort the events to determine priority to process
-//                std::sort(events.begin(), events.end(),
-//                    [&](const auto &lhs,const auto &rhs) {
-//                        return lhs->getNumValidSignatures() > rhs->getNumValidSignatures()
-//                            || (context->isSumeragi && lhs->order == 0)
-//                            || lhs->order < rhs->order;
-//                    }
-//                );
-//                */
-//                logger::info("sumeragi")  <<  "sorted "   <<  events.size();
-//                for (auto& event : events) {
-//
-//                    logger::info("sumeragi")  <<  "evens order:"  <<  event.order();
-//                    /*
-//                    if (!transaction_validator::isValid(event)) {
-//                        continue;
-//                    }
-//                    */
-//                    // Process transaction
-//                    std::thread([&event]{ processTransaction(event); }).join();
-//                }
-//            }
-//        }
     }
 
 };  // namespace sumeragi
