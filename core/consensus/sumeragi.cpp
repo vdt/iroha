@@ -58,7 +58,6 @@ namespace sumeragi {
     using namespace command;
     using namespace object;
 
-
     static size_t concurrency =
         std::thread::hardware_concurrency() <= 0
         ? 1
@@ -222,9 +221,9 @@ namespace sumeragi {
         connection::receive([](const std::string& from, Event::ConsensusEvent& event) {
             logger::info("sumeragi") << "receive!";
             logger::info("sumeragi") << "received message! sig:[" << event.eventsignatures_size() << "]";
-            //TODO:
-            // 1) sign transaction
-            // 2) reply to "from" with signature
+            // TODO:
+            // TODO: 1) sign event
+            // TODO: 2) reply to "from" with signature of event
 
             // send processTransaction(event) as a task to processing pool
             // this returns std::future<void> object
@@ -371,7 +370,7 @@ namespace sumeragi {
                 logger::info("sumeragi")        <<  "tail public key is "   <<  context->validatingPeers.at(context->proxyTailNdx)->getPublicKey();
                 logger::info("sumeragi")        <<  "tail is "              <<  context->proxyTailNdx;
                 logger::info("sumeragi")        <<  "my public key is "     <<  config::PeerServiceConfig::getInstance().getMyPublicKey();
-                
+
                 if (context->validatingPeers.at(context->proxyTailNdx)->getPublicKey() == config::PeerServiceConfig::getInstance().getMyPublicKey()) {
                     logger::info("sumeragi")    <<  "I will send event to " <<  context->validatingPeers.at(context->proxyTailNdx)->getIP();
                     connection::send(context->validatingPeers.at(context->proxyTailNdx)->getIP(), std::move(event)); // Think In Process
