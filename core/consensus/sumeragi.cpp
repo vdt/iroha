@@ -39,6 +39,7 @@ limitations under the License.
 #include "../repository/consensus/transaction_repository.hpp"
 #include "../repository/domain/account_repository.hpp"
 #include "../infra/config/peer_service_with_json.hpp"
+#include "../infra/config/iroha_config_with_json.hpp"
 
 /**
 * |ーーー|　|ーーー|　|ーーー|　|ーーー|
@@ -59,7 +60,7 @@ namespace sumeragi {
     using namespace object;
 
     static size_t concurrency =
-        std::thread::hardware_concurrency() <= 0
+        config::IrohaConfigManager::getInstance().getParam("concurrency", 0) <= 0
         ? 1
         : std::thread::hardware_concurrency();
 
@@ -70,7 +71,6 @@ namespace sumeragi {
             .worker_queue_size = 1024
         }
     );
-
 
     namespace detail {
 
@@ -200,7 +200,9 @@ namespace sumeragi {
         logger::info("sumeragi")    <<  "set number of validatingPeer";
 
         context->numValidatingPeers = context->validatingPeers.size();
-        context->maxFaulty = context->numValidatingPeers / 3;  // Default to approx. 1/3 of the network. TODO: make this configurable
+        context->maxFaulty = context->numValidatingPeers / (
+                config::IrohaConfigManager::getInstance().getParam("numValidatingPeers", 3)
+        );  // Default to approx. 1/3 of the network.
 
         context->proxyTailNdx = context->maxFaulty * 2 + 1;
 
@@ -438,7 +440,7 @@ namespace sumeragi {
      * are the same, then the order (ascending) of the public keys for the servers are used.
      */
     void determineConsensusOrder() {
-        // WIP We creat getTrustScore() function. till then circle list
+        // TODO: create getTrustScore() function. until then go in order of the public key
         /*
         std::deque<
                 std::unique_ptr<peer::Node>
