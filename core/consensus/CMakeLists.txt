@@ -14,8 +14,6 @@ target_link_libraries(sumeragi
   connection_with_grpc
   signature
   event_repository
-  commands
-  objects
 )
 
 ADD_LIBRARY(consensus_event STATIC
@@ -23,8 +21,6 @@ ADD_LIBRARY(consensus_event STATIC
 )
 
 target_link_libraries(consensus_event
-  commands
-  objects
   transaction
   validator
   hash

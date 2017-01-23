@@ -12,13 +12,12 @@ target_link_libraries(http_server_with_cappuccino
   datetime
   peer_service_with_json
 
-  objects
   base64
   signature
   convertor
   connection_with_grpc
   peer_service_with_json
 
+  domain_repository
   event_repository
 )
-

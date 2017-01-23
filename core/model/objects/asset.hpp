@@ -38,7 +38,6 @@ public:
         precision(-1)
     {}
 
-
     explicit Asset(
         std::string     domain,
         std::string     name,
@@ -63,4 +62,3 @@ public:
 };  // namespace asset
 
 #endif  // CORE_DOMAIN_OBJECTS_ASSET_HPP_
-

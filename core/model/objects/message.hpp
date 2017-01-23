@@ -34,4 +34,3 @@ public:
 };  // namespace message
 
 #endif  // CORE_DOMAIN_OBJECTS_MESSAGE_HPP_
-
