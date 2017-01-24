@@ -1,12 +1,9 @@
 /*
 Copyright Soramitsu Co., Ltd. 2016 All Rights Reserved.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
      http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,10 +13,14 @@ limitations under the License.
 
 package repository;
 
-public class Repository {
-    public static native void save(String key,String value);
-    public static native void find(String key);
-    public static native void update(String key,String value);
-    public static native void remove(String key);
-}
+import java.util.HashMap;
 
+public class AccountRepository {
+
+
+    public static native void     updateQuantity(String uuid, String assetName, long newValue);
+    public static native void     attach(String uuid, String assetName, long assetDefault);
+    public static native HashMap<String,String> findByUuid(String uuid);
+    public static native void     add(String publicKey, String alias);
+
+}

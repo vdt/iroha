@@ -18,7 +18,7 @@ limitations under the License.
 #include "../../util/exception.hpp"
 #include "../../infra/config/iroha_config_with_json.hpp"
 
-#include "../../../util/logger.hpp"
+#include "../../util/logger.hpp"
 
 #include <leveldb/write_batch.h>
 #include <leveldb/db.h>

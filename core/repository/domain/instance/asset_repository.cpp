@@ -16,6 +16,7 @@ limitations under the License.
 #include <string>
 #include <vector>
 
+#include "../asset_repository.hpp"
 #include "../../world_state_repository.hpp"
 
 namespace repository{

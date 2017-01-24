@@ -7,6 +7,7 @@ SET(ED25519_PATH "${PROJECT_SOURCE_DIR}/core/vendor/ed25519")
 
 link_directories(
     ${CRYPTO_PATH}
+    ${PROJECT_BINARY_DIR}/lib
     ${ED25519_PATH}/lib
 )
 
