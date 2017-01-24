@@ -230,15 +230,13 @@ namespace sumeragi {
         logger::info("sumeragi")    <<  "initialize panicCount :"           << context->panicCount;
         logger::info("sumeragi")    <<  "initialize myPublicKey :"          << context->myPublicKey;
 
-        //TODO: move the peer service and ordering code to another place
-        //determineConsensusOrder(); // side effect is to modify validatingPeers
         logger::info("sumeragi")    <<  "initialize is sumeragi :"          << static_cast<int>(context->isSumeragi);
         logger::info("sumeragi")    <<  "initialize.....  complete!";
     }
 
 
     std::uint64_t getNextOrder() {
-        return 0l;
+        return 0l; //TODO: get the order from ametsuchi
         //return merkle_transaction_repository::getLastLeafOrder() + 1;
     }
 
@@ -413,7 +411,8 @@ namespace sumeragi {
         logger::info("sumeragi")    <<  "broadcastEnd:"     <<  broadcastEnd;
         logger::info("sumeragi")    <<  "broadcastStart:"   <<  broadcastStart;
         // WIP issue hash event
-        //connection::sendAll(event->transaction().hash()); //TODO: change this to only broadcast to peer range between broadcastStart and broadcastEnd
+        //TODO: create panic event
+        // connection::sendAll(event->transaction().hash()); //TODO: change this to only broadcast to peer range between broadcastStart and broadcastEnd
     }
 
     void setAwkTimer(int const sleepMillisecs, std::function<void(void)> const action) {
