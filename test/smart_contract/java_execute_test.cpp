@@ -20,6 +20,21 @@ limitations under the License.
 
 using smart_contract::SmartContract;
 
+/*
+TEST(SmartContractFromJava, test1){
+    std::string contractName = "JavaExecuteTest";
+    std::string functionName = "test1";
+    SmartContract smartContract = SmartContract();
+    smartContract.initializeVM(contractName);
+    smartContract.invokeFunction(
+        contractName,
+        functionName,
+        params
+    );
+    smartContract.finishVM(contractName);
+}
+*/
+/*
 TEST(SmartContractFromJava, test2){
     std::string contractName = "JavaExecuteTest";
     std::string functionName = "test2";
@@ -33,6 +48,7 @@ TEST(SmartContractFromJava, test2){
         functionName,
         params
     );
+    smartContract.finishVM(contractName);
 }
 
 TEST(SmartContractFromJava, test3){
@@ -48,8 +64,9 @@ TEST(SmartContractFromJava, test3){
         functionName,
         params
     );
+    smartContract.finishVM(contractName);
 }
-
+*/
 TEST(SmartContractFromJava, test4){
     std::string contractName = "JavaExecuteTest";
     std::string functionName = "test4";
@@ -62,6 +79,7 @@ TEST(SmartContractFromJava, test4){
         functionName,
         params
     );
+    smartContract.finishVM(contractName);
 }
 
 TEST(SmartContractFromJava, test5){
@@ -76,4 +94,5 @@ TEST(SmartContractFromJava, test5){
         functionName,
         params
     );
+    smartContract.finishVM(contractName);
 }

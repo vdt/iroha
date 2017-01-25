@@ -22,6 +22,7 @@ public class JavaExecuteTest {
     System.loadLibrary("AccountRepository");
     System.loadLibrary("AssetRepository");
   }
+
   // Test invoke function
   public static void test1() {
     System.out.println("Hello in JAVA! test1()");
@@ -54,7 +55,25 @@ public class JavaExecuteTest {
   }
 
   public static void main(String[] argv) {
-    System.out.println("Hello in JAVA! check repositories");
-    System.out.println("Please do test[1..5]().");
+
+    System.out.println("Hello in JAVA! This function is expected to be invoked manually");
+    System.out.println("If you want to invoke test functions automatically, you should run test/smart_contract/java_execute_test (gTset)");
+
+    JavaExecuteTest exe = new JavaExecuteTest();
+    exe.test1();
+
+    HashMap<String, String> mp = new HashMap<String, String>();
+
+    mp.put("key1", "Mizuki");
+    mp.put("key2", "Sonoko");
+    exe.test2(mp);
+
+    mp.put("key1", "水樹");
+    mp.put("key2", "素子");
+    exe.test3(mp);
+
+    mp.put("key", "this is public key");
+    exe.test4(mp);
+    exe.test5(mp);
   }
 }
