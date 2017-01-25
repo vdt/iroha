@@ -6,6 +6,8 @@ include_directories(
   ${SMART_CONTRACT_PATH}
   /usr/lib/jvm/java-1.8.0-openjdk-amd64/include
   /usr/lib/jvm/java-1.8.0-openjdk-amd64/include/linux
+  ${JAVA_HOME}/include
+  ${JAVA_HOME}/include/linux
 )
 
 link_directories(
@@ -24,3 +26,14 @@ target_link_libraries(AssetRepository
   domain_repository
   convertor
 )
+
+# compile .java files
+#add_custom_command(OUTPUT SampleCurrency.class
+#  POST_BUILD
+#  COMMAND javac -encoding UTF-8 $IROHA_HOME/smart_contract/SampleCurrency/SampleCurrency.java
+#)
+
+#add_custom_command(OUTPUT JavaExecuteTest.class
+#  POST_BUILD
+#  COMMAND javac -encoding UTF-8 $IROHA_HOME/smart_contract/JavaExecuteTest/JavaExecuteTest.java
+#)

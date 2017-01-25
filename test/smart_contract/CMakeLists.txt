@@ -45,15 +45,15 @@ add_test(
   COMMAND $<TARGET_FILE:java_vm_test>
 )
 
-add_executable(java_jni_test java_jni_test.cpp)
-target_link_libraries(java_jni_test
+add_executable(java_execute_test java_execute_test.cpp)
+target_link_libraries(java_execute_test
   smart_contract_with_java
   jvm
   ${GTEST_LIBS_DIR}/libgtest.a
   ${GTEST_LIBS_DIR}/libgtest_main.a
   pthread)
 add_test(
-  NAME java_jni_test
-  COMMAND $<TARGET_FILE:java_jni_test>
+  NAME java_execute_test
+  COMMAND $<TARGET_FILE:java_execute_test>
 )
 

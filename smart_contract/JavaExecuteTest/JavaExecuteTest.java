@@ -16,7 +16,7 @@ import repository.AccountRepository;
 import repository.AssetRepository;
 
 // no package declasration
-public class JNITest {
+public class JavaExecuteTest {
 
   static {
     System.loadLibrary("AccountRepository");
@@ -24,7 +24,7 @@ public class JNITest {
   }
   // Test invoke function
   public static void test1() {
-      System.out.println("Hello in JAVA! test1()");
+    System.out.println("Hello in JAVA! test1()");
   }
 
   // Test invoke function(HashMap<String,String>)
@@ -53,17 +53,8 @@ public class JNITest {
     assetRepo.add(params.get("key"), "MizukiSonoko", "1234567");
   }
 
-/*
   public static void main(String[] argv) {
     System.out.println("Hello in JAVA! check repositories");
-
-    System.out.println("AccountRepository");
-    AccountRepository account = new AccountRepository();
-    account.add("MPTt3ULszCLGQqAqRgHj2gQHVnxn/DuNlRXR/iLMAn4=", "MyAccount");
-
-    System.out.println("AssetRepository");
-    AssetRepository asset = new AssetRepository();
-    asset.add("MPTt3ULszCLGQqAqRgHj2gQHVnxn/DuNlRXR/iLMAn4=", "MyAsset", "123456");
+    System.out.println("Please do test[1..5]().");
   }
-*/
 }

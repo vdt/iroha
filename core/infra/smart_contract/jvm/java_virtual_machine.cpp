@@ -37,20 +37,31 @@ namespace smart_contract {
             return nullptr;
         }
 
-        std::string java_command = "-Djava.class.path=" + std::string(getenv("IROHA_HOME")) + "/smart_contract/" + contractName + "/";
+		// paths are hard coding here...
+        std::vector<std::string> java_args = {
+            "-Djava.class.path="      + std::string(getenv("IROHA_HOME")) + "/smart_contract/" + contractName + "/",
+            "-Djava.library.path="    + std::string(getenv("IROHA_HOME")) + "/build/lib/",
+            "-Djava.security.policy=" + std::string(getenv("IROHA_HOME")) + "/smart_contract/java.policy.txt",
+            "-Djava.security.manager",
+        };
 
-        std::cout << java_command.c_str() << " " << contractName.c_str() << std::endl;
-		
-		JavaVMOption options[3];
-		options[0].optionString = const_cast<char*>( java_command.c_str() );
-		options[1].optionString = const_cast<char*>("-Djava.security.manager");
-		options[2].optionString = const_cast<char*>("-Djava.security.policy=policy.txt");
+        const int OptionSize = java_args.size();
+
+		JavaVMOption options[OptionSize];
+        for (int i=0; i<OptionSize; i++) {
+            options[i].optionString = const_cast<char*>( java_args[i].c_str() );
+        }
+
+        for (int i=0; i<OptionSize; i++) {
+            std::cout << options[i].optionString << " ";
+        }
+        std::cout << contractName << std::endl;
 		
         JavaVMInitArgs vm_args;
         vm_args.version  = JNI_VERSION_1_6;
         vm_args.options  = options;
-        vm_args.nOptions = 3;
-        //vm_args.ignoreUnrecognized = true;
+        vm_args.nOptions = OptionSize;
+        vm_args.ignoreUnrecognized = JNI_FALSE;
 		
         JNIEnv *env;
         JavaVM *jvm;

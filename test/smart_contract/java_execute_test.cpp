@@ -21,7 +21,7 @@ limitations under the License.
 using smart_contract::SmartContract;
 
 TEST(SmartContractFromJava, test2){
-    std::string contractName = "JNITest";
+    std::string contractName = "JavaExecuteTest";
     std::string functionName = "test2";
     std::unordered_map<std::string, std::string> params;
     params["key1"] = "Mizuki";
@@ -36,7 +36,7 @@ TEST(SmartContractFromJava, test2){
 }
 
 TEST(SmartContractFromJava, test3){
-    std::string contractName = "JNITest";
+    std::string contractName = "JavaExecuteTest";
     std::string functionName = "test3";
     std::unordered_map<std::string, std::string> params;
     params["key1"] = "水樹";
@@ -51,7 +51,7 @@ TEST(SmartContractFromJava, test3){
 }
 
 TEST(SmartContractFromJava, test4){
-    std::string contractName = "JNITest";
+    std::string contractName = "JavaExecuteTest";
     std::string functionName = "test4";
     std::unordered_map<std::string, std::string> params;
     params["key"] = "MPTt3ULszCLGQqAqRgHj2gQHVnxn/DuNlRXR/iLMAn4=";
@@ -65,7 +65,7 @@ TEST(SmartContractFromJava, test4){
 }
 
 TEST(SmartContractFromJava, test5){
-    std::string contractName = "JNITest";
+    std::string contractName = "JavaExecuteTest";
     std::string functionName = "test5";
     std::unordered_map<std::string, std::string> params;
     params["key"] = "MPTt3ULszCLGQqAqRgHj2gQHVnxn/DuNlRXR/iLMAn4=";
